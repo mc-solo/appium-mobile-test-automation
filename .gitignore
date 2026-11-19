@@ -1,0 +1,28 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+venv/
+.venv/
+env/
+pip-log.txt
+pip-delete-this-directory.txt
+
+# pytest / reports
+.pytest_cache/
+reports/
+*.html
+!README.md
+
+# Appium / screenshots
+screenshots/
+*.png
+*.log
+
+# IDE / OS
+.idea/
+.vscode/
+*.swp
+.DS_Store
