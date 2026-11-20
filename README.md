@@ -1,73 +1,85 @@
 # Appium Mobile Test Automation
 
-Python + Appium starter for testing the ApiDemos Android app on an emulator or a real device.
+Python + Appium tests for the ApiDemos Android app on an emulator or a real device.
 
-## What this is
+## Status — honest
 
-A small, real starter: capabilities with env overrides, page objects for the ApiDemos home and Views screens, and pytest tests for launch, navigation, and text input.
+**These tests have only been collected, never run on a device or
+emulator.** `pytest --collect-only` finds 8 tests. There was no
+Appium server and no emulator/device available when this was built,
+so there are no passing or failing results yet. Do not treat this as
+a passing suite until you run it yourself.
 
-## What this is not
+## Folder tree
 
-These tests were **not run on a device** in this scaffold build. They need a running emulator or device and an Appium server, neither of which was available here. Do not treat this as a passing suite until you run it yourself.
+```
+config/            settings, environment presets, capabilities
+test-data/         JSON test data (typed text, expected labels)
+pages/             page objects (Base, Home, Views)
+tests/             smoke, navigation, input tests
+docs/              SETUP.md, TESTING.md
+conftest.py        driver + page fixtures
+pytest.ini         markers, HTML report to reports/report.html
+```
+
+See `ARCHITECTURE.md` for why each folder exists and how to add a
+new test.
 
 ## Setup
 
-1. Install Python 3.10+ and the Appium server:
-   ```bash
-   npm install -g appium
-   appium driver install uiautomator2
-   ```
-2. Create a virtual environment and install the dependencies:
-   ```bash
-   python3 -m venv .venv
-   source .venv/bin/activate
-   pip install -r requirements.txt
-   ```
-3. Start an Android emulator (Android Studio AVD Manager) or connect a real device with USB debugging on.
-4. Install the ApiDemos apk on the emulator/device:
-   ```bash
-   adb install path/to/ApiDemos.apk
-   ```
-5. Start the Appium server:
-   ```bash
-   appium
-   ```
+Full guide: `docs/SETUP.md`.
+
+```bash
+npm install -g appium
+appium driver install uiautomator2
+
+python3 -m venv .venv
+source .venv/bin/activate
+pip install -r requirements.txt
+
+cp .env.example .env   # optional, edit only what differs
+adb install path/to/ApiDemos.apk
+appium                     # separate terminal, leave running
+```
 
 ## Run the tests
 
+Requires a connected emulator/device with ApiDemos installed and
+the Appium server running.
+
 ```bash
 pytest
-```
-
-To run one file:
-
-```bash
 pytest tests/test_app_launch.py -v
+pytest -m smoke -v
+pytest -m navigation -v
+pytest -m input -v
 ```
 
 A HTML report is written to `reports/report.html`.
 
 ## Config
 
-Capabilities live in `config/capabilities.py`. Override them without editing code:
+All settings live in `config/settings.py` (env vars override the
+preset selected by `APPIUM_ENV` in `config/environments.py`).
+Copy `.env.example` to `.env` to change them without editing code.
 
 | Env var | Default |
 | --- | --- |
+| `APPIUM_ENV` | `emulator` |
+| `APPIUM_SERVER_URL` | `http://127.0.0.1:4723` |
 | `APPIUM_DEVICE_NAME` | `Android Emulator` |
 | `APPIUM_PLATFORM_VERSION` | `14` |
 | `APPIUM_APP_PACKAGE` | `io.appium.android.apis` |
 | `APPIUM_APP_ACTIVITY` | `.ApiDemos` |
-| `APPIUM_SERVER_URL` | `http://127.0.0.1:4723` |
+| `APPIUM_TIMEOUT` | `10` |
+| `APPIUM_NEW_COMMAND_TIMEOUT` | `60` |
 
-## Layout
+## What is tested
 
-```
-config/capabilities.py   Android capabilities + env overrides
-pages/base_page.py       tap, find, enter text, screenshot helpers
-pages/home_page.py       ApiDemos home list
-pages/views_page.py      ApiDemos Views list
-tests/test_app_launch.py
-tests/test_navigation.py
-tests/test_input.py
-conftest.py              driver fixture (connects only when a test runs)
-```
+| File | Covers |
+| --- | --- |
+| `tests/test_app_launch.py` | App launches, home list visible, expected categories |
+| `tests/test_navigation.py` | Home → Views, Views → back, Home → Text |
+| `tests/test_input.py` | Type / clear / retype in Views → TextFields |
+
+Details: `docs/TESTING.md`.
