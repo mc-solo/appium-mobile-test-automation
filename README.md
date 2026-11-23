@@ -5,7 +5,7 @@ Python + Appium tests for the ApiDemos Android app on an emulator or a real devi
 ## Status — honest
 
 **These tests have only been collected, never run on a device or
-emulator.** `pytest --collect-only` finds 8 tests. There was no
+emulator.** `pytest --collect-only` finds 12 tests. There was no
 Appium server and no emulator/device available when this was built,
 so there are no passing or failing results yet. Do not treat this as
 a passing suite until you run it yourself.
@@ -14,9 +14,10 @@ a passing suite until you run it yourself.
 
 ```
 config/            settings, environment presets, capabilities
-test-data/         JSON test data (typed text, expected labels)
-pages/             page objects (Base, Home, Views)
-tests/             smoke, navigation, input tests
+test-data/         JSON test data (typed text, expected labels, gestures)
+pages/             page objects (Base, Home, Views) incl. gestures
+tests/             smoke, navigation, input, gestures tests
+utils/             screenshot helper (used by the failure hook)
 docs/              SETUP.md, TESTING.md
 conftest.py        driver + page fixtures
 pytest.ini         markers, HTML report to reports/report.html
@@ -53,7 +54,11 @@ pytest tests/test_app_launch.py -v
 pytest -m smoke -v
 pytest -m navigation -v
 pytest -m input -v
+pytest -m gestures -v
 ```
+
+When a test fails, a screenshot of the failing screen is saved to
+`screenshots/` by the hook in `conftest.py`.
 
 A HTML report is written to `reports/report.html`.
 
@@ -81,5 +86,6 @@ Copy `.env.example` to `.env` to change them without editing code.
 | `tests/test_app_launch.py` | App launches, home list visible, expected categories |
 | `tests/test_navigation.py` | Home → Views, Views → back, Home → Text |
 | `tests/test_input.py` | Type / clear / retype in Views → TextFields |
+| `tests/test_gestures.py` | Swipe, long-press, scroll to Lists, tap at screen centre |
 
 Details: `docs/TESTING.md`.

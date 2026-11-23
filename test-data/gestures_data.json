@@ -1,0 +1,1 @@
+{"longPress":{"durationMs":1000,"target":"Buttons"},"scroll":{"maxSwipes":5,"target":"Lists"},"swipe":{"directionDown":"down","directionUp":"up","percent":0.75},"tap":{"xRatio":0.5,"yRatio":0.5}}

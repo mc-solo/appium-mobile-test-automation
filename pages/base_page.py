@@ -62,3 +62,62 @@ class BasePage:
     def take_screenshot(self, name):
         self.screenshot_dir.mkdir(parents=True, exist_ok=True)
         self.driver.save_screenshot(str(self.screenshot_dir / f"{name}.png"))
+
+    # ---- gestures (UiAutomator2 "mobile:" commands) ----
+    # Appium-Python-Client 4 has no TouchAction; gestures go through
+    # the driver's mobile: commands, which UiAutomator2 understands.
+    # Directions and ratios come from test-data/gestures_data.json.
+
+    def _window_size(self):
+        size = self.driver.get_window_size()
+        return size["width"], size["height"]
+
+    def _point(self, x_ratio, y_ratio):
+        width, height = self._window_size()
+        return int(width * x_ratio), int(height * y_ratio)
+
+    def swipe(self, direction, percent=0.75):
+        """Swipe across most of the screen in the given direction."""
+        width, height = self._window_size()
+        self.driver.execute_script(
+            "mobile: swipeGesture",
+            {
+                "left": 100,
+                "top": 100,
+                "width": width - 200,
+                "height": height - 200,
+                "direction": direction,
+                "percent": percent,
+            },
+        )
+
+    def swipe_up(self, percent=0.75):
+        self.swipe("up", percent)
+
+    def swipe_down(self, percent=0.75):
+        self.swipe("down", percent)
+
+    def long_press(self, locator, duration_ms=1000):
+        """Long-press the element found by locator."""
+        element = self.find(locator)
+        self.driver.execute_script(
+            "mobile: longClickGesture",
+            {"elementId": element.id, "duration": duration_ms},
+        )
+
+    def tap_at(self, x_ratio, y_ratio):
+        """Tap a point given as ratios of the screen width/height."""
+        x, y = self._point(x_ratio, y_ratio)
+        self.driver.execute_script("mobile: clickGesture", {"x": x, "y": y})
+
+    def scroll_to_text(self, text, max_swipes=5):
+        """Swipe up until an element with the given text is visible."""
+        locator = (
+            AppiumBy.ANDROID_UIAUTOMATOR,
+            f'new UiSelector().text("{text}")',
+        )
+        for _ in range(max_swipes):
+            if self.is_visible(locator):
+                return True
+            self.swipe_up()
+        return self.is_visible(locator)

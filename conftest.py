@@ -12,6 +12,24 @@ from appium.options.android import UiAutomator2Options
 from config.settings import get_settings
 from pages.home_page import HomePage
 from pages.views_page import ViewsPage
+from utils.screenshot import save_screenshot
+
+
+@pytest.hookimpl(wrapper=True)
+def pytest_runtest_makereport(item, call):
+    """Save a screenshot when a test fails (call phase only).
+
+    The driver fixture is still alive at this point, so the
+    screenshot shows the screen the test failed on. A screenshot
+    that cannot be taken never hides the test failure.
+    """
+    outcome = yield
+    report = outcome.get_result()
+    if report.when == "call" and report.failed:
+        driver = item.funcargs.get("driver")
+        if driver is not None:
+            save_screenshot(driver, item.name, get_settings().screenshot_dir)
+    return report
 
 
 @pytest.fixture(scope="function")
