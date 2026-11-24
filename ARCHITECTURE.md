@@ -1,5 +1,18 @@
 # Architecture
 
+## Diagram
+
+```mermaid
+flowchart LR
+    ENV[.env] --> CFG[config/]
+    CFG --> CONF[conftest.py]
+    TD[test-data/] --> TST[tests/]
+    CONF --> TST
+    TST --> PG[pages/]
+    PG --> APP[Android app]
+    TST --> SHOT[screenshots/]
+```
+
 ## Folder tree
 
 ```

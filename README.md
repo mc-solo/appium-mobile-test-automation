@@ -5,7 +5,7 @@ Python + Appium tests for the ApiDemos Android app on an emulator or a real devi
 ## Status — honest
 
 **These tests have only been collected, never run on a device or
-emulator.** `pytest --collect-only` finds 12 tests. There was no
+emulator.** `pytest --collect-only` finds 17 tests. There was no
 Appium server and no emulator/device available when this was built,
 so there are no passing or failing results yet. Do not treat this as
 a passing suite until you run it yourself.
@@ -51,7 +51,9 @@ the Appium server running.
 ```bash
 pytest
 pytest tests/test_app_launch.py -v
+pytest tests/test_app_start.py -v
 pytest -m smoke -v
+pytest -m app_start -v
 pytest -m navigation -v
 pytest -m input -v
 pytest -m gestures -v
@@ -84,8 +86,22 @@ Copy `.env.example` to `.env` to change them without editing code.
 | File | Covers |
 | --- | --- |
 | `tests/test_app_launch.py` | App launches, home list visible, expected categories |
+| `tests/test_app_start.py` | App installed and starts, restart after terminate, deep link into Views |
 | `tests/test_navigation.py` | Home → Views, Views → back, Home → Text |
 | `tests/test_input.py` | Type / clear / retype in Views → TextFields |
 | `tests/test_gestures.py` | Swipe, long-press, scroll to Lists, tap at screen centre |
 
 Details: `docs/TESTING.md`.
+
+## Diagram
+
+```mermaid
+flowchart LR
+    ENV[.env] --> CFG[config/]
+    CFG --> CONF[conftest.py]
+    TD[test-data/] --> TST[tests/]
+    CONF --> TST
+    TST --> PG[pages/]
+    PG --> APP[Android app]
+    TST --> SHOT[screenshots/]
+```

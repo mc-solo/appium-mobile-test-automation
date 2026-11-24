@@ -63,6 +63,16 @@ class BasePage:
         self.screenshot_dir.mkdir(parents=True, exist_ok=True)
         self.driver.save_screenshot(str(self.screenshot_dir / f"{name}.png"))
 
+    def open_deep_link(self, url, package):
+        """Open a deep link into the app (UiAutomator2 "mobile: deepLink").
+
+        The URL and package come from the caller (test-data / config);
+        this method knows only how to ask the driver to open the link.
+        """
+        self.driver.execute_script(
+            "mobile: deepLink", {"url": url, "package": package}
+        )
+
     # ---- gestures (UiAutomator2 "mobile:" commands) ----
     # Appium-Python-Client 4 has no TouchAction; gestures go through
     # the driver's mobile: commands, which UiAutomator2 understands.
